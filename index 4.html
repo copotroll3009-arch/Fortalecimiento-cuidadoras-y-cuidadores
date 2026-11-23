@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>¿Qué te llevas hoy? · Programa de Fortalecimiento de Cuidadoras y Cuidadores</title>
+  <meta name="description" content="Encuesta breve y anónima al cierre de la sesión con Lola Hernández.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1B4B8F">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231B4B8F'/%3E%3Cpath d='M16 24s-7-4.3-7-9.2A3.9 3.9 0 0 1 16 12.6a3.9 3.9 0 0 1 7 2.2C23 19.7 16 24 16 24z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blanco: #FFFFFF;
+      --fondo: #F5F9FE;
+      --azul-claro: #E6EFFB;
+      --azul-suave: #BCD3F2;
+      --azul: #2F6FC4;
+      --azul-fuerte: #1B4B8F;
+      --azul-noche: #0F2A52;
+      --tinta: #14213D;
+      --tinta-suave: #4A5872;
+      --borde: #D6E2F3;
+      --error: #B42318;
+      --error-fondo: #FEF3F2;
+      --radio: 18px;
+      --sombra: 0 10px 30px -12px rgba(27, 75, 143, .28);
+      --t-titulo: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+      --t-texto: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --barra-alto: 88px;
+      color-scheme: light;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 500px at 50% -220px, var(--azul-claro), transparent 70%),
+        var(--fondo);
+      color: var(--tinta);
+      font: 400 17px/1.55 var(--t-texto);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2 {
+      font-family: var(--t-titulo);
+      font-weight: 400;
+      color: var(--azul-noche);
+      line-height: 1.12;
+      margin: 0 0 .45em;
+      letter-spacing: -.005em;
+    }
+    h1 { font-size: clamp(2rem, 8.5vw, 2.7rem); }
+    h2 { font-size: clamp(1.55rem, 6.4vw, 2rem); }
+    h1:focus, h2:focus { outline: none; }
+    p { margin: 0 0 1em; }
+    :focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+    .sr-only {
+      position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    /* ---------- Marco ---------- */
+    .progreso {
+      position: sticky; top: 0; z-index: 30;
+      height: 6px; background: var(--azul-claro);
+    }
+    .progreso__relleno {
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--azul), var(--azul-fuerte));
+      border-radius: 0 6px 6px 0;
+      transition: width .35s ease;
+    }
+    .app {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 26px 18px calc(var(--barra-alto) + 36px + env(safe-area-inset-bottom));
+    }
+    .encabezado {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 22px;
+      font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--azul-fuerte);
+    }
+    .marca { display: inline-flex; align-items: center; gap: 8px; line-height: 1.25; }
+    .marca svg { width: 26px; height: 26px; flex: none; }
+    .contador { color: var(--tinta-suave); font-weight: 700; letter-spacing: .04em; white-space: nowrap; flex: none; }
+
+    .pantalla[hidden] { display: none !important; }
+    .pantalla.entra { animation: entra .35s ease; }
+    @keyframes entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .etiqueta-preg {
+      display: inline-block;
+      background: var(--azul-claro);
+      color: var(--azul-fuerte);
+      font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      border-radius: 999px; padding: 4px 12px; margin-bottom: 14px;
+    }
+    .ayuda { color: var(--tinta-suave); margin-top: -4px; }
+    .opcional { font-family: var(--t-texto); font-size: .95rem; color: var(--tinta-suave); font-weight: 600; }
+
+    .tarjeta {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* ---------- Bienvenida ---------- */
+    .portada {
+      background: linear-gradient(160deg, var(--azul-fuerte), var(--azul-noche));
+      color: var(--blanco);
+      border-radius: 26px;
+      padding: 30px 24px 26px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra);
+    }
+    .portada h1 { color: var(--blanco); }
+    .portada p { color: #DCE8F8; }
+    .portada__ponente {
+      display: inline-block; margin-bottom: 14px;
+      font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--azul-suave);
+    }
+    .portada__dibujo { position: absolute; right: -24px; bottom: -30px; width: 150px; opacity: .16; }
+    .puntos { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; }
+    .puntos li { display: flex; gap: 12px; align-items: flex-start; }
+    .puntos svg { width: 24px; height: 24px; flex: none; color: var(--azul); margin-top: 1px; }
+
+    /* ---------- Botones ---------- */
+    .btn {
+      appearance: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 54px; padding: 0 24px;
+      border-radius: 999px;
+      border: 2px solid var(--azul-fuerte);
+      background: var(--blanco);
+      color: var(--azul-fuerte);
+      font: 800 1.02rem/1.1 var(--t-texto);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn--primario {
+      background: var(--azul-fuerte); color: var(--blanco);
+      box-shadow: 0 8px 20px -8px rgba(27, 75, 143, .6);
+    }
+    .btn--primario:hover { background: var(--azul-noche); }
+    .btn--ancho { width: 100%; }
+    .btn--chico { min-height: 46px; padding: 0 18px; font-size: .95rem; }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+    .btn svg { width: 20px; height: 20px; flex: none; }
+
+    .barra {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      background: rgba(255, 255, 255, .94);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--borde);
+      padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+    }
+    .barra[hidden] { display: none; }
+    .barra__in { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 10px; }
+    .barra__in .btn-atras { padding: 0 18px; border-color: var(--borde); color: var(--tinta-suave); }
+
+    /* ---------- Campos ---------- */
+    .area, .entrada {
+      width: 100%;
+      border: 2px solid var(--borde);
+      border-radius: 16px;
+      background: var(--blanco);
+      color: var(--tinta);
+      font: 400 1.05rem/1.5 var(--t-texto);
+      padding: 14px 16px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .area { min-height: 140px; resize: vertical; }
+    .entrada { min-height: 56px; }
+    .area:focus, .entrada:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 4px var(--azul-claro); }
+    .area::placeholder, .entrada::placeholder { color: #8796AE; }
+    .contador-car { text-align: right; font-size: .8rem; color: var(--tinta-suave); margin-top: 6px; }
+    .entrada--palabra { font: 400 1.6rem/1.2 var(--t-titulo); text-align: center; color: var(--azul-noche); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .chips__titulo { width: 100%; font-size: .85rem; font-weight: 700; color: var(--tinta-suave); margin-bottom: 2px; }
+    .chip {
+      appearance: none;
+      min-height: 44px; padding: 0 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--azul-suave);
+      background: var(--blanco);
+      color: var(--azul-fuerte);
+      font: 700 .95rem var(--t-texto);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .chip:hover { border-color: var(--azul); }
+    .chip[aria-pressed="true"] { background: var(--azul-fuerte); border-color: var(--azul-fuerte); color: var(--blanco); }
+    .chip--frase::before { content: '+ '; opacity: .7; }
+
+    /* Tarjetas seleccionables */
+    .opciones { display: grid; gap: 10px; }
+    .opciones--2 { grid-template-columns: 1fr 1fr; }
+    .opcion {
+      appearance: none;
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; min-height: 60px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 2px solid var(--borde);
+      background: var(--blanco);
+      color: var(--tinta);
+      font: 700 1rem/1.3 var(--t-texto);
+      text-align: left;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color .15s ease, background-color .15s ease, transform .12s ease;
+    }
+    .opcion:hover { border-color: var(--azul-suave); }
+    .opcion:active { transform: scale(.985); }
+    .opcion__icono {
+      flex: none; width: 40px; height: 40px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: var(--azul-claro); font-size: 1.3rem;
+    }
+    .opcion__texto { flex: 1; }
+    .opcion__marca {
+      flex: none; width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid var(--azul-suave);
+      display: grid; place-items: center;
+    }
+    .opcion--multi .opcion__marca { border-radius: 7px; }
+    .opcion__marca svg { width: 14px; height: 14px; opacity: 0; color: var(--blanco); }
+    .opcion[aria-pressed="true"], .opcion[aria-checked="true"] {
+      border-color: var(--azul-fuerte); background: var(--azul-claro);
+    }
+    .opcion[aria-pressed="true"] .opcion__marca, .opcion[aria-checked="true"] .opcion__marca {
+      background: var(--azul-fuerte); border-color: var(--azul-fuerte);
+    }
+    .opcion[aria-pressed="true"] .opcion__marca svg, .opcion[aria-checked="true"] .opcion__marca svg { opacity: 1; }
+    .opcion--propia .opcion__icono { background: var(--blanco); border: 1.5px dashed var(--azul-suave); }
+    .quitar { appearance: none; border: 0; background: none; color: var(--azul); font: 700 .85rem var(--t-texto); text-decoration: underline; cursor: pointer; padding: 6px; }
+
+    .mis-herr { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .mis-herr li {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 10px 12px 14px; border-radius: 16px;
+      background: var(--blanco); border: 2px solid var(--azul-suave);
+      animation: entra .3s ease;
+    }
+    .mis-herr__num {
+      flex: none; width: 32px; height: 32px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--azul-fuerte); color: var(--blanco); font-weight: 800;
+    }
+    .mis-herr__texto { flex: 1; font-weight: 700; overflow-wrap: anywhere; }
+    .vacio { padding: 18px; border: 2px dashed var(--azul-suave); border-radius: 16px; text-align: center; color: var(--tinta-suave); }
+    .agregar { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; }
+    .agregar .entrada { min-height: 50px; font-size: 1rem; }
+
+    /* Caritas */
+    .caritas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; }
+    .carita {
+      appearance: none;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px 2px 10px;
+      border-radius: 16px;
+      border: 2px solid transparent;
+      background: var(--blanco);
+      color: var(--tinta-suave);
+      font: 700 .72rem/1.15 var(--t-texto);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 2px 8px -4px rgba(27, 75, 143, .3);
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .carita svg { width: 46px; height: 46px; transition: transform .2s ease; }
+    .carita[aria-checked="true"] { border-color: var(--azul-fuerte); background: var(--azul-claro); color: var(--azul-noche); }
+    .carita[aria-checked="true"] svg { transform: scale(1.12); }
+    .carita-elegida {
+      min-height: 1.6em; text-align: center; font-family: var(--t-titulo);
+      font-size: 1.35rem; color: var(--azul-fuerte);
+    }
+
+    /* Deslizador 0–10 */
+    .deslizador { padding: 8px 4px 4px; }
+    .deslizador__valor {
+      display: flex; align-items: baseline; justify-content: center; gap: 8px;
+      font-family: var(--t-titulo); color: var(--azul-fuerte);
+      margin-bottom: 4px;
+    }
+    .deslizador__num { font-size: 3.6rem; line-height: 1; }
+    .deslizador__texto { text-align: center; font-weight: 700; color: var(--tinta-suave); min-height: 1.5em; margin-bottom: 14px; }
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 44px; background: transparent; cursor: pointer;
+      touch-action: pan-y;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 12px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--azul) var(--pct, 50%), var(--azul-claro) var(--pct, 50%));
+    }
+    input[type="range"]::-moz-range-track { height: 12px; border-radius: 999px; background: var(--azul-claro); }
+    input[type="range"]::-moz-range-progress { height: 12px; border-radius: 999px; background: var(--azul); }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 34px; height: 34px; margin-top: -11px;
+      border-radius: 50%; background: var(--blanco); border: 4px solid var(--azul-fuerte);
+      box-shadow: 0 4px 10px rgba(27, 75, 143, .35);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--blanco);
+      border: 4px solid var(--azul-fuerte); box-shadow: 0 4px 10px rgba(27, 75, 143, .35);
+    }
+    input[type="range"].sin-tocar::-webkit-slider-thumb { border-color: var(--azul-suave); }
+    .deslizador__extremos { display: flex; justify-content: space-between; font-size: .8rem; color: var(--tinta-suave); font-weight: 700; }
+
+    .bloque { margin-top: 22px; }
+    .bloque__titulo { font-weight: 800; font-size: 1.05rem; margin-bottom: 10px; color: var(--azul-noche); }
+
+    .error {
+      display: none;
+      margin: 0 0 16px; padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--error-fondo);
+      color: var(--error);
+      border-left: 6px solid var(--error);
+      font-weight: 700;
+    }
+    .error.visible { display: block; }
+
+    /* ---------- Gracias ---------- */
+    .compromiso {
+      background: linear-gradient(160deg, var(--azul), var(--azul-fuerte) 55%, var(--azul-noche));
+      color: var(--blanco);
+      border-radius: 26px;
+      padding: 26px 22px;
+      box-shadow: var(--sombra);
+      margin-bottom: 18px;
+    }
+    .compromiso__mini { font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--azul-suave); }
+    .compromiso__herr { font-family: var(--t-titulo); font-size: 1.8rem; line-height: 1.15; margin: 8px 0 10px; overflow-wrap: anywhere; }
+    .compromiso__cuando { font-weight: 700; color: #DCE8F8; }
+    .compromiso__palabra { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .25); color: #DCE8F8; }
+    .compromiso__palabra b { font-family: var(--t-titulo); font-weight: 400; font-size: 1.3rem; color: var(--blanco); }
+
+    .estado { display: flex; gap: 12px; align-items: flex-start; }
+    .estado__icono { flex: none; width: 28px; height: 28px; color: var(--azul-fuerte); }
+    .estado--error .estado__icono { color: var(--error); }
+    .estado p { margin: 4px 0 10px; color: var(--tinta-suave); }
+    .acciones { display: grid; gap: 10px; }
+    .girando { animation: gira 1s linear infinite; }
+    @keyframes gira { to { transform: rotate(360deg); } }
+
+    .pie { text-align: center; font-size: .82rem; color: var(--tinta-suave); margin-top: 26px; }
+
+    @media (min-width: 520px) {
+      .carita { font-size: .8rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important; scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progreso" aria-hidden="true"><div class="progreso__relleno" id="progreso"></div></div>
+
+  <main class="app">
+    <header class="encabezado">
+      <span class="marca">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#1B4B8F"/><path d="M16 24s-7-4.3-7-9.2A3.9 3.9 0 0 1 16 12.6a3.9 3.9 0 0 1 7 2.2C23 19.7 16 24 16 24z" fill="#fff"/></svg>
+        <span id="nombre-programa"></span>
+      </span>
+      <span class="contador" id="contador" aria-live="polite"></span>
+    </header>
+
+    <div id="anuncio" class="sr-only" aria-live="polite"></div>
+    <div id="pantallas"></div>
+  </main>
+
+  <nav class="barra" id="barra" aria-label="Navegación" hidden>
+    <div class="barra__in">
+      <button type="button" class="btn btn-atras" id="btn-atras">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="sr-only">Atrás</span>
+      </button>
+      <button type="button" class="btn btn--primario" id="btn-siguiente">Siguiente</button>
+    </div>
+  </nav>
+
+  <noscript><p style="padding:20px">Esta encuesta necesita JavaScript activado.</p></noscript>
+
+<script>
+/* =====================================================================
+   1) CONFIGURACIÓN — pega aquí la URL de tu Apps Script (termina en /exec)
+   ===================================================================== */
+var CONFIG = {
+  URL_APPS_SCRIPT: 'https://script.google.com/macros/s/AKfycbwFYs7S2bsXMMtKBQ3KJ2T0i-CVLmdMscl23AjlOVdtsKtq6sYDy5hqRShpQeGTB_jy/exec',
+  PROGRAMA: 'Programa de Fortalecimiento de Cuidadoras y Cuidadores',
+  PONENTE: 'Lola Hernández',
+  // Si el enlace trae ?sesion=Nombre, ese nombre se guarda en la hoja.
+  SESION_POR_DEFECTO: 'Sesión general'
+};
+
+/* =====================================================================
+   2) CONTENIDO — puedes cambiar textos y opciones aquí
+   ===================================================================== */
+
+var ROLES = [
+  { icono: '🏡', texto: 'Cuido a un familiar o ser querido' },
+  { icono: '🩺', texto: 'Cuido como parte de mi trabajo' },
+  { icono: '💞', texto: 'Ambas' },
+  { icono: '🌱', texto: 'Por ahora no cuido a nadie' }
+];
+
+var CARITAS = [
+  { valor: 1, texto: 'Con mucho que procesar' },
+  { valor: 2, texto: 'Igual que llegué' },
+  { valor: 3, texto: 'Más tranquila/o' },
+  { valor: 4, texto: 'Motivada/o' },
+  { valor: 5, texto: 'Renovada/o' }
+];
+
+var CUANDO = ['Hoy mismo', 'Mañana', 'Esta semana', 'Cuando lo necesite'];
+
+var PERSONAS = [
+  { icono: '👯', texto: 'Una amiga o amigo', corto: 'a mi amiga/o' },
+  { icono: '👨‍👩‍👧', texto: 'Alguien de mi familia', corto: 'a mi familia' },
+  { icono: '🤲', texto: 'Otra persona que cuida', corto: 'a otra persona que cuida' },
+  { icono: '💼', texto: 'Alguien de mi trabajo', corto: 'a alguien de mi trabajo' }
+];
+
+var RECOMENDACION = [
+  'Desliza para elegir',
+  'Nada probable', 'Nada probable', 'Poco probable', 'Poco probable', 'Tal vez',
+  'Tal vez', 'Probable', 'Probable', 'Muy probable', 'Muy probable', '¡Sin duda!'
+];
+
+/* =====================================================================
+   3) LÓGICA — no necesitas editar debajo de esta línea
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var CLAVE_SESION = 'encuesta-lola-borrador-v1';
+  var CLAVE_PENDIENTES = 'encuesta-lola-pendientes-v1';
+  var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var params = new URLSearchParams(location.search);
+  var sesionURL = (params.get('sesion') || '').trim().slice(0, 80);
+
+  var I = {
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    ok: '<svg class="estado__icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7 12.5l3.2 3.2L17 9" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    error: '<svg class="estado__icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v6M12 16.5v.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+    carga: '<svg class="estado__icono girando" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>',
+    descargar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-5-5m5 5l5-5M5 20h14" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
+  function carita(n) {
+    var boca = {
+      1: 'M15 33c3-3.2 15-3.2 18 0',
+      2: 'M16 31h16',
+      3: 'M16 29.5c3 3 13 3 16 0',
+      4: 'M14.5 28c3.2 5.5 15.8 5.5 19 0',
+      5: 'M14 27c2 8 18 8 20 0z'
+    }[n];
+    var ojos = n === 5
+      ? '<path d="M15 20c1.5-2.4 4.5-2.4 6 0M27 20c1.5-2.4 4.5-2.4 6 0" stroke="#0F2A52" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+      : '<circle cx="18" cy="20" r="2.4" fill="#0F2A52"/><circle cx="30" cy="20" r="2.4" fill="#0F2A52"/>';
+    var tonos = ['#DCE8F8', '#CFE0F6', '#B9D3F3', '#9CC0EE', '#7FAEE8'];
+    return '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="' + tonos[n - 1] + '"/>' + ojos +
+      '<path d="' + boca + '" stroke="#0F2A52" stroke-width="2.4" fill="' + (n === 5 ? '#fff' : 'none') + '" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  /* ---------- Estado ---------- */
+  function nuevoEstado() {
+    var b = new Uint8Array(5);
+    crypto.getRandomValues(b);
+    return {
+      id: 'R-' + Array.prototype.map.call(b, function (x) { return x.toString(16).padStart(2, '0'); }).join('').toUpperCase(),
+      inicio: new Date().toISOString(),
+      paso: 0,
+      rol: '', animo: 0,
+      llevas: '',
+      herramientas: [],
+      inmediata: '', cuando: '',
+      reflexion: '',
+      persona: '', platicarias: '',
+      recomienda: null, programa: '',
+      palabra: '', mensaje: '',
+      fila: null, enviado: false
+    };
+  }
+  var E;
+  try { E = JSON.parse(sessionStorage.getItem(CLAVE_SESION)) || nuevoEstado(); } catch (e) { E = nuevoEstado(); }
+  function guardar() { try { sessionStorage.setItem(CLAVE_SESION, JSON.stringify(E)); } catch (e) { /* privado */ } }
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function esc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function anunciar(t) { var a = $('#anuncio'); a.textContent = ''; setTimeout(function () { a.textContent = t; }, 50); }
+
+  /* ---------- Definición de pantallas ---------- */
+  function areaTexto(id, valor, ph, frases) {
+    return (frases ? '<div class="chips" role="group" aria-label="Frases para empezar"><span class="chips__titulo">Toca una frase para empezar:</span>' +
+      frases.map(function (f) { return '<button type="button" class="chip chip--frase" data-frase="' + esc(f) + '" data-para="' + id + '">' + esc(f) + '</button>'; }).join('') + '</div>' : '') +
+      '<textarea class="area" id="' + id + '" maxlength="800" placeholder="' + esc(ph) + '" aria-labelledby="t-' + id + '">' + esc(valor) + '</textarea>' +
+      '<div class="contador-car" aria-hidden="true"><span data-cuenta="' + id + '">' + valor.length + '</span>/800</div>';
+  }
+
+  var PANTALLAS = [
+    { /* 0 */ id: 'inicio', sinBarra: true, render: function () {
+      return '<div class="portada">' +
+        '<svg class="portada__dibujo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 28S3 20.5 3 11.6A7 7 0 0 1 16 7.4a7 7 0 0 1 13 4.2C29 20.5 16 28 16 28z" fill="#fff"/></svg>' +
+        '<span class="portada__ponente">Sesión con ' + esc(CONFIG.PONENTE) + '</span>' +
+        '<h1 id="t-inicio" tabindex="-1">¿Qué te llevas hoy?</h1>' +
+        '<p>Gracias por regalarte este tiempo. Cuéntanos con tus palabras qué te deja esta sesión.</p></div>' +
+        '<ul class="puntos">' +
+        '<li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>Toma unos <b>3 minutos</b>.</span></li>' +
+        '<li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Es <b>anónima</b>: no te pedimos nombre, correo ni teléfono.</span></li>' +
+        '<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.2A3.9 3.9 0 0 1 12 8.6a3.9 3.9 0 0 1 7 2.2C19 15.7 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>No hay respuestas correctas. Lo que escribas ayuda a mejorar el programa.</span></li>' +
+        '</ul>' +
+        '<button type="button" class="btn btn--primario btn--ancho" id="btn-empezar">Comenzar</button>';
+    } },
+
+    { /* 1 */ id: 'rol', titulo: 'Para empezar, ¿desde dónde vives el cuidado?', render: function (p) {
+      return '<span class="etiqueta-preg">Sobre ti</span><h2 id="t-rol" tabindex="-1">' + p.titulo + '</h2>' +
+        '<div class="opciones" role="radiogroup" aria-labelledby="t-rol">' +
+        ROLES.map(function (r) {
+          return '<button type="button" class="opcion" role="radio" aria-checked="' + (E.rol === r.texto) + '" data-campo="rol" data-valor="' + esc(r.texto) + '">' +
+            '<span class="opcion__icono" aria-hidden="true">' + r.icono + '</span><span class="opcion__texto">' + esc(r.texto) + '</span><span class="opcion__marca">' + I.check + '</span></button>';
+        }).join('') + '</div>';
+    }, valida: function () { return E.rol ? '' : 'Elige una opción para continuar.'; } },
+
+    { /* 2 */ id: 'animo', titulo: '¿Cómo te vas de esta sesión?', render: function (p) {
+      var sel = CARITAS.find(function (c) { return c.valor === E.animo; });
+      return '<span class="etiqueta-preg">Cómo te sientes</span><h2 id="t-animo" tabindex="-1">' + p.titulo + '</h2>' +
+        '<p class="ayuda">Toca la carita que más se parece a ti ahora.</p>' +
+        '<div class="caritas" role="radiogroup" aria-labelledby="t-animo">' +
+        CARITAS.map(function (c) {
+          return '<button type="button" class="carita" role="radio" aria-checked="' + (E.animo === c.valor) + '" data-campo="animo" data-valor="' + c.valor + '">' +
+            carita(c.valor) + '<span>' + esc(c.texto) + '</span></button>';
+        }).join('') + '</div><div class="carita-elegida" id="carita-elegida" aria-hidden="true">' + (sel ? esc(sel.texto) : '') + '</div>';
+    }, valida: function () { return E.animo ? '' : 'Toca una carita para continuar.'; } },
+
+    { /* 3 */ id: 'llevas', titulo: '¿Qué te llevas de esta sesión?', render: function (p) {
+      return '<span class="etiqueta-preg">Pregunta 1 de 6</span><h2 id="t-llevas" tabindex="-1">' + p.titulo + '</h2>' +
+        areaTexto('llevas', E.llevas, 'Escribe con tus palabras…', ['Me llevo…', 'Aprendí que…', 'Me quedo con…']);
+    }, valida: function () { return E.llevas.trim().length >= 3 ? '' : 'Escribe al menos unas palabras.'; } },
+
+    { /* 4 */ id: 'herramientas', titulo: '¿Qué herramientas te llevas para tu vida cotidiana?', render: function (p) {
+      return '<span class="etiqueta-preg">Pregunta 2 de 6</span><h2 id="t-herramientas" tabindex="-1">' + p.titulo + '</h2>' +
+        '<p class="ayuda">Escríbelas <b>una por una</b> y toca “Agregar”. Puedes agregar varias.</p>' +
+        '<div class="agregar" style="margin:0 0 16px"><label class="sr-only" for="nueva-herr">Escribe una herramienta</label>' +
+        '<input class="entrada" id="nueva-herr" maxlength="120" placeholder="Escribe una herramienta…" autocomplete="off" enterkeyhint="done">' +
+        '<button type="button" class="btn btn--primario btn--chico" id="btn-agregar">Agregar</button></div>' +
+        (E.herramientas.length
+          ? '<ol class="mis-herr" aria-label="Herramientas que agregaste">' + E.herramientas.map(function (h, i) {
+              return '<li><span class="mis-herr__num" aria-hidden="true">' + (i + 1) + '</span><span class="mis-herr__texto">' + esc(h) + '</span>' +
+                '<button type="button" class="quitar" data-quitar="' + i + '" aria-label="Quitar ' + esc(h) + '">Quitar</button></li>';
+            }).join('') + '</ol>'
+          : '<p class="vacio">Aquí aparecerán las herramientas que agregues.</p>');
+    }, valida: function () {
+      var pendiente = $('#nueva-herr') && $('#nueva-herr').value.trim();
+      if (pendiente) agregarHerramienta(true);
+      return E.herramientas.length ? '' : 'Escribe al menos una herramienta y toca “Agregar”.';
+    } },
+
+    { /* 5 */ id: 'inmediata', titulo: 'De las herramientas o estrategias que te llevas, ¿cuál puedes usar inmediatamente?', render: function (p) {
+      var lista = E.herramientas;
+      return '<span class="etiqueta-preg">Pregunta 3 de 6</span><h2 id="t-inmediata" tabindex="-1">' + p.titulo + '</h2>' +
+        '<p class="ayuda">Elige una de las que escribiste.</p>' +
+        '<div class="opciones" role="radiogroup" aria-labelledby="t-inmediata">' +
+        lista.map(function (t) {
+          return '<button type="button" class="opcion" role="radio" aria-checked="' + (E.inmediata === t) + '" data-campo="inmediata" data-valor="' + esc(t) + '">' +
+            '<span class="opcion__texto">' + esc(t) + '</span><span class="opcion__marca">' + I.check + '</span></button>';
+        }).join('') + '</div>' +
+        '<div class="bloque"><div class="bloque__titulo" id="t-cuando">¿Cuándo la vas a usar?</div><div class="chips" role="radiogroup" aria-labelledby="t-cuando">' +
+        CUANDO.map(function (c) { return '<button type="button" class="chip" role="radio" aria-pressed="' + (E.cuando === c) + '" aria-checked="' + (E.cuando === c) + '" data-campo="cuando" data-valor="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') +
+        '</div></div>';
+    }, valida: function () {
+      if (!E.inmediata) return 'Elige la herramienta que puedes usar primero.';
+      return E.cuando ? '' : 'Elige cuándo la vas a usar.';
+    } },
+
+    { /* 6 */ id: 'reflexion', titulo: '¿Qué reflexión te llevas hoy que no habías hecho?', render: function (p) {
+      return '<span class="etiqueta-preg">Pregunta 4 de 6</span><h2 id="t-reflexion" tabindex="-1">' + p.titulo + '</h2>' +
+        areaTexto('reflexion', E.reflexion, 'Algo que hoy viste distinto…', ['Hoy me di cuenta de que…', 'Nunca había pensado que…', 'Me doy permiso de…']);
+    }, valida: function () { return E.reflexion.trim().length >= 3 ? '' : 'Escribe al menos unas palabras.'; } },
+
+    { /* 7 */ id: 'platicar', titulo: 'Si le platicaras a alguien de esta sesión de hoy, ¿qué le dirías?', render: function (p) {
+      var per = PERSONAS.find(function (x) { return x.texto === E.persona; });
+      var ph = per ? 'Le diría ' + per.corto + ' que…' : 'Le diría que…';
+      return '<span class="etiqueta-preg">Pregunta 5 de 6</span><h2 id="t-platicar" tabindex="-1">' + p.titulo + '</h2>' +
+        '<div class="bloque__titulo" id="t-persona">Primero, ¿a quién se lo contarías?</div>' +
+        '<div class="opciones opciones--2" role="radiogroup" aria-labelledby="t-persona" style="margin-bottom:18px">' +
+        PERSONAS.map(function (x) {
+          return '<button type="button" class="opcion" role="radio" aria-checked="' + (E.persona === x.texto) + '" data-campo="persona" data-valor="' + esc(x.texto) + '" style="flex-direction:column;align-items:flex-start;gap:8px">' +
+            '<span class="opcion__icono" aria-hidden="true">' + x.icono + '</span><span class="opcion__texto">' + esc(x.texto) + '</span></button>';
+        }).join('') + '</div>' +
+        '<label class="bloque__titulo" for="platicarias" style="display:block">¿Qué le dirías?</label>' +
+        '<textarea class="area" id="platicarias" maxlength="800" placeholder="' + esc(ph) + '">' + esc(E.platicarias) + '</textarea>' +
+        '<div class="contador-car" aria-hidden="true"><span data-cuenta="platicarias">' + E.platicarias.length + '</span>/800</div>';
+    }, valida: function () {
+      if (!E.persona) return 'Elige a quién se lo contarías.';
+      return E.platicarias.trim().length >= 3 ? '' : 'Escribe qué le dirías.';
+    } },
+
+    { /* 8 */ id: 'programa', titulo: 'Si hablaras de este programa con otras personas, ¿qué les dirías?', render: function (p) {
+      var v = E.recomienda == null ? 5 : E.recomienda;
+      return '<span class="etiqueta-preg">Pregunta 6 de 6</span><h2 id="t-programa" tabindex="-1">' + p.titulo + '</h2>' +
+        '<div class="tarjeta deslizador">' +
+        '<div class="bloque__titulo" id="t-recomienda" style="text-align:center">¿Qué tan probable es que lo recomiendes?</div>' +
+        '<div class="deslizador__valor" aria-hidden="true"><span class="deslizador__num" id="num-recomienda">' + (E.recomienda == null ? '–' : v) + '</span><span>/ 10</span></div>' +
+        '<div class="deslizador__texto" id="txt-recomienda" aria-hidden="true">' + RECOMENDACION[E.recomienda == null ? 0 : v + 1] + '</div>' +
+        '<input type="range" id="recomienda" min="0" max="10" step="1" value="' + v + '" aria-labelledby="t-recomienda"' +
+        (E.recomienda == null ? ' class="sin-tocar" aria-valuetext="Sin elegir"' : ' aria-valuetext="' + v + ' de 10, ' + RECOMENDACION[v + 1] + '"') + ' style="--pct:' + (v * 10) + '%">' +
+        '<div class="deslizador__extremos" aria-hidden="true"><span>0 · Nada</span><span>10 · Sin duda</span></div></div>' +
+        '<label class="bloque__titulo" for="programa" style="display:block">¿Qué les dirías?</label>' +
+        '<textarea class="area" id="programa" maxlength="800" placeholder="Les diría que este programa…">' + esc(E.programa) + '</textarea>' +
+        '<div class="contador-car" aria-hidden="true"><span data-cuenta="programa">' + E.programa.length + '</span>/800</div>';
+    }, valida: function () {
+      if (E.recomienda == null) return 'Mueve el círculo para elegir un número del 0 al 10.';
+      return E.programa.trim().length >= 3 ? '' : 'Escribe qué les dirías.';
+    } },
+
+    { /* 9 */ id: 'palabra', titulo: 'Si resumieras esta sesión en una sola palabra, ¿cuál sería?', render: function (p) {
+      return '<span class="etiqueta-preg">Para cerrar</span><h2 id="t-palabra" tabindex="-1">' + p.titulo + '</h2>' +
+        '<input class="entrada entrada--palabra" id="palabra" maxlength="30" autocomplete="off" autocapitalize="sentences" placeholder="Una palabra" value="' + esc(E.palabra) + '" aria-labelledby="t-palabra">' +
+        '<div class="bloque"><label class="bloque__titulo" for="mensaje" style="display:block">¿Quieres dejarle un mensaje a ' + esc(CONFIG.PONENTE) + '? <span class="opcional">(opcional)</span></label>' +
+        '<textarea class="area" id="mensaje" maxlength="800" placeholder="Gracias por…" style="min-height:110px">' + esc(E.mensaje) + '</textarea></div>';
+    }, valida: function () {
+      return E.palabra.trim() ? '' : 'Escribe una palabra para terminar.';
+    } },
+
+    { /* 10 */ id: 'gracias', sinBarra: true, render: function () {
+      return '<h1 id="t-gracias" tabindex="-1">¡Gracias por compartir!</h1>' +
+        '<p>Esta es tu tarjeta para recordar lo que te llevas. Guárdala en tu celular.</p>' +
+        '<div class="compromiso" id="compromiso">' +
+        '<div class="compromiso__mini">Mi herramienta para llevar</div>' +
+        '<div class="compromiso__herr">' + esc(E.inmediata) + '</div>' +
+        '<div class="compromiso__cuando">La usaré: ' + esc(E.cuando.toLowerCase()) + '</div>' +
+        (E.palabra ? '<div class="compromiso__palabra">Hoy en una palabra: <b>' + esc(E.palabra) + '</b></div>' : '') +
+        '</div>' +
+        '<button type="button" class="btn btn--primario btn--ancho" id="btn-tarjeta">' + I.descargar + 'Guardar mi tarjeta</button>' +
+        '<div class="tarjeta estado" id="estado" role="status" style="margin-top:18px"></div>' +
+        '<p class="pie">Puedes cerrar esta página. ' + esc(CONFIG.PROGRAMA) + ' · ' + esc(CONFIG.PONENTE) + '</p>';
+    } }
+  ];
+  var NUM_PREGUNTAS = PANTALLAS.length - 2;
+
+  /* ---------- Render ---------- */
+  function pintar(enfocar) {
+    var p = PANTALLAS[E.paso];
+    var cont = $('#pantallas');
+    cont.innerHTML = '<section class="pantalla' + (reducido ? '' : ' entra') + '" aria-labelledby="t-' + p.id + '">' +
+      '<div class="error" id="error" role="alert"></div>' + p.render(p) + '</section>';
+    $('#barra').hidden = !!p.sinBarra;
+    $('#btn-siguiente').textContent = E.paso === PANTALLAS.length - 2 ? 'Enviar respuestas' : 'Siguiente';
+    $('#btn-atras').disabled = E.paso <= 1;
+    var avance = Math.min(E.paso, NUM_PREGUNTAS) / NUM_PREGUNTAS;
+    $('#progreso').style.width = (E.paso === PANTALLAS.length - 1 ? 100 : avance * 100) + '%';
+    $('#contador').textContent = E.paso > 0 && E.paso < PANTALLAS.length - 1 ? E.paso + ' de ' + NUM_PREGUNTAS : '';
+    window.scrollTo(0, 0);
+    if (enfocar !== false) { var h = $('#t-' + p.id); if (h) h.focus({ preventScroll: true }); }
+    if (p.id === 'gracias') alTerminar();
+  }
+
+  function error(msj) {
+    var e = $('#error');
+    e.textContent = msj;
+    e.classList.toggle('visible', !!msj);
+    if (msj) e.scrollIntoView({ block: 'center', behavior: reducido ? 'auto' : 'smooth' });
+  }
+
+  function siguiente() {
+    var p = PANTALLAS[E.paso];
+    var msj = p.valida ? p.valida() : '';
+    if (msj) { error(msj); anunciar(msj); return; }
+    E.paso++;
+    guardar();
+    history.pushState({ paso: E.paso }, '', '#' + PANTALLAS[E.paso].id);
+    pintar();
+  }
+  function atras() {
+    if (E.paso <= 1 || E.enviado) return;
+    E.paso--;
+    guardar();
+    history.pushState({ paso: E.paso }, '', '#' + PANTALLAS[E.paso].id);
+    pintar();
+  }
+
+  /* ---------- Eventos ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var b;
+    if (t.closest('#btn-empezar')) { E.paso = 1; guardar(); history.pushState({ paso: 1 }, '', '#rol'); pintar(); return; }
+    if (t.closest('#btn-siguiente')) return siguiente();
+    if (t.closest('#btn-atras')) return atras();
+    if (t.closest('#btn-tarjeta')) return descargarTarjeta();
+    if (t.closest('#btn-agregar')) return agregarHerramienta();
+
+    if ((b = t.closest('[data-campo]'))) {
+      var campo = b.dataset.campo;
+      var valor = campo === 'animo' ? Number(b.dataset.valor) : b.dataset.valor;
+      E[campo] = valor;
+      guardar();
+      $$('[data-campo="' + campo + '"]').forEach(function (x) {
+        var on = String(x.dataset.valor) === String(valor);
+        if (x.hasAttribute('aria-checked')) x.setAttribute('aria-checked', String(on));
+        if (x.classList.contains('chip')) x.setAttribute('aria-pressed', String(on));
+      });
+      if (campo === 'animo') {
+        var c = CARITAS.find(function (x) { return x.valor === valor; });
+        $('#carita-elegida').textContent = c.texto;
+      }
+      if (campo === 'persona') {
+        var per = PERSONAS.find(function (x) { return x.texto === valor; });
+        $('#platicarias').placeholder = 'Le diría ' + per.corto + ' que…';
+      }
+      error('');
+      return;
+    }
+    if ((b = t.closest('[data-quitar]'))) {
+      var q = E.herramientas[Number(b.dataset.quitar)];
+      E.herramientas.splice(Number(b.dataset.quitar), 1);
+      if (E.inmediata === q) E.inmediata = '';
+      guardar(); pintar(false);
+      anunciar('Quitaste ' + q + '.');
+      $('#nueva-herr').focus();
+      return;
+    }
+    if ((b = t.closest('[data-frase]'))) {
+      var area = $('#' + b.dataset.para);
+      var frase = b.dataset.frase.replace(/…$/, ' ');
+      var actual = area.value;
+      area.value = actual && !/\s$/.test(actual) ? actual + (/[.!?]$/.test(actual) ? ' ' : '. ') + frase : actual + frase;
+      area.dispatchEvent(new Event('input', { bubbles: true }));
+      area.focus();
+      area.setSelectionRange(area.value.length, area.value.length);
+    }
+  });
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    var mapa = { llevas: 'llevas', reflexion: 'reflexion', platicarias: 'platicarias', programa: 'programa', palabra: 'palabra', mensaje: 'mensaje' };
+    if (mapa[t.id]) {
+      E[mapa[t.id]] = t.value;
+      var c = $('[data-cuenta="' + t.id + '"]');
+      if (c) c.textContent = t.value.length;
+      guardar(); error('');
+    }
+    if (t.id === 'recomienda') {
+      var v = Number(t.value);
+      E.recomienda = v;
+      t.classList.remove('sin-tocar');
+      t.style.setProperty('--pct', (v * 10) + '%');
+      t.setAttribute('aria-valuetext', v + ' de 10, ' + RECOMENDACION[v + 1]);
+      $('#num-recomienda').textContent = v;
+      $('#txt-recomienda').textContent = RECOMENDACION[v + 1];
+      guardar(); error('');
+    }
+  });
+  // Un toque sin arrastrar también cuenta como elección del deslizador
+  document.addEventListener('change', function (e) {
+    if (e.target.id === 'recomienda') e.target.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.id === 'nueva-herr' && e.key === 'Enter') { e.preventDefault(); agregarHerramienta(); }
+    if (e.target.id === 'palabra' && e.key === 'Enter') { e.preventDefault(); siguiente(); }
+  });
+
+  window.addEventListener('popstate', function (e) {
+    var destino = e.state && typeof e.state.paso === 'number' ? e.state.paso : 0;
+    if (E.enviado) { history.pushState({ paso: E.paso }, '', '#gracias'); return; }
+    if (destino > E.paso) { history.replaceState({ paso: E.paso }, '', '#' + PANTALLAS[E.paso].id); return; }
+    E.paso = Math.max(destino, 0);
+    guardar(); pintar();
+  });
+
+  function agregarHerramienta(silencioso) {
+    var input = $('#nueva-herr');
+    var t = input.value.replace(/\s+/g, ' ').trim();
+    if (t.length < 2) { if (!silencioso) { error('Escribe una herramienta antes de tocar “Agregar”.'); input.focus(); } return; }
+    if (E.herramientas.some(function (x) { return x.toLowerCase() === t.toLowerCase(); })) {
+      input.value = ''; if (!silencioso) { error('Ya la agregaste.'); input.focus(); } return;
+    }
+    if (E.herramientas.length >= 10) { if (!silencioso) error('Puedes agregar hasta 10.'); return; }
+    E.herramientas.push(t);
+    guardar();
+    if (silencioso) return;
+    pintar(false);
+    anunciar('Agregaste: ' + t + '. Llevas ' + E.herramientas.length + '.');
+    $('#nueva-herr').focus();
+  }
+
+  /* ---------- Envío ---------- */
+  function construirFila() {
+    var d = new Date();
+    var dos = function (n) { return String(n).padStart(2, '0'); };
+    var animo = CARITAS.find(function (c) { return c.valor === E.animo; });
+    return {
+      'ID': E.id,
+      'Fecha y hora': d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate()) + ' ' + dos(d.getHours()) + ':' + dos(d.getMinutes()),
+      'Sesión': sesionURL || CONFIG.SESION_POR_DEFECTO,
+      '¿Desde dónde vive el cuidado?': E.rol,
+      '¿Cómo se va de la sesión? (1-5)': E.animo,
+      '¿Cómo se va? (texto)': animo ? animo.texto : '',
+      '¿Qué te llevas de esta sesión?': E.llevas.trim(),
+      '¿Qué herramientas te llevas para tu vida cotidiana?': E.herramientas.join(' | '),
+      '¿Cuál puedes utilizar inmediatamente?': E.inmediata,
+      '¿Cuándo la usará?': E.cuando,
+      '¿Qué reflexión te llevas hoy que no habías hecho?': E.reflexion.trim(),
+      '¿A quién le platicaría de la sesión?': E.persona,
+      'Si le platicaras de esta sesión, ¿qué le dirías?': E.platicarias.trim(),
+      '¿Qué tan probable es que recomiende el programa? (0-10)': E.recomienda,
+      'Si hablaras de este programa, ¿qué les dirías?': E.programa.trim(),
+      'La sesión en una palabra': E.palabra.trim(),
+      'Mensaje para la ponente': E.mensaje.trim(),
+      'Duración (min)': Math.round((d - new Date(E.inicio)) / 6000) / 10
+    };
+  }
+
+  function urlValida() {
+    var u = String(CONFIG.URL_APPS_SCRIPT || '').trim();
+    return /^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u) ? u : '';
+  }
+  function pendientes() { try { return JSON.parse(localStorage.getItem(CLAVE_PENDIENTES) || '[]'); } catch (e) { return []; } }
+  function guardarPendiente(f) {
+    try {
+      var l = pendientes().filter(function (x) { return x.ID !== f.ID; });
+      l.push(f); localStorage.setItem(CLAVE_PENDIENTES, JSON.stringify(l));
+    } catch (e) { /* nada */ }
+  }
+  function quitarPendiente(id) {
+    try { localStorage.setItem(CLAVE_PENDIENTES, JSON.stringify(pendientes().filter(function (x) { return x.ID !== id; }))); } catch (e) { /* nada */ }
+  }
+
+  async function enviar(fila) {
+    var u = urlValida();
+    if (!u) return { ok: false, motivo: 'sin-url' };
+    var ctrl = new AbortController();
+    var t = setTimeout(function () { ctrl.abort(); }, 20000);
+    try {
+      var res = await fetch(u, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ fila: fila }),
+        signal: ctrl.signal
+      });
+      var j = null;
+      try { j = JSON.parse(await res.text()); } catch (e) { /* no JSON */ }
+      return j && j.ok ? { ok: true } : { ok: false, motivo: 'servidor' };
+    } catch (e) {
+      return { ok: false, motivo: 'conexion' };
+    } finally { clearTimeout(t); }
+  }
+
+  var enviando = false;
+  async function alTerminar() {
+    if (E.enviado) return pintarEstado('ok');
+    if (enviando) return;
+    enviando = true;
+    E.fila = construirFila(); // mismo ID: si regresa a corregir, se reemplaza
+    guardar();
+    guardarPendiente(E.fila);
+    pintarEstado('enviando');
+    var r = await enviar(E.fila);
+    enviando = false;
+    if (r.ok) { quitarPendiente(E.fila.ID); E.enviado = true; guardar(); pintarEstado('ok'); }
+    else pintarEstado('error', r.motivo);
+  }
+
+  function pintarEstado(tipo, motivo) {
+    var c = $('#estado');
+    if (!c) return;
+    c.className = 'tarjeta estado' + (tipo === 'error' ? ' estado--error' : '');
+    if (tipo === 'enviando') { c.innerHTML = I.carga + '<div><b>Enviando tus respuestas…</b></div>'; return; }
+    if (tipo === 'ok') { c.innerHTML = I.ok + '<div><b>Tus respuestas llegaron. ¡Gracias!</b></div>'; return; }
+    c.innerHTML = I.error + '<div><b>' + (motivo === 'sin-url' ? 'Modo de prueba: la encuesta aún no está conectada.' : 'No pudimos enviar tus respuestas.') + '</b>' +
+      '<p>' + (motivo === 'sin-url' ? 'Tus respuestas quedaron guardadas en este dispositivo.' : 'Quedaron guardadas en tu celular. Revisa tu conexión a internet y vuelve a intentarlo.') + '</p>' +
+      '<div class="acciones">' + (motivo === 'sin-url' ? '' : '<button type="button" class="btn btn--primario btn--chico" id="btn-reintentar">Intentar de nuevo</button>') +
+      '<button type="button" class="btn btn--chico" id="btn-json">Descargar mis respuestas</button></div></div>';
+    var r = $('#btn-reintentar');
+    if (r) r.addEventListener('click', alTerminar);
+    $('#btn-json').addEventListener('click', function () {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify({ respuestas: pendientes() }, null, 2)], { type: 'application/json' }));
+      a.download = 'respuestas-encuesta.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    });
+  }
+
+  // Reintenta en silencio envíos que quedaron pendientes en este dispositivo
+  (async function () {
+    if (!urlValida()) return;
+    var l = pendientes();
+    for (var i = 0; i < l.length; i++) {
+      if (E.fila && l[i].ID === E.fila.ID && !E.enviado) continue;
+      var r = await enviar(l[i]);
+      if (r.ok) quitarPendiente(l[i].ID);
+    }
+  })();
+
+  /* ---------- Tarjeta PNG ---------- */
+  function lineas(ctx, texto, ancho) {
+    var out = [], act = '';
+    String(texto).split(' ').forEach(function (p) {
+      var prueba = act ? act + ' ' + p : p;
+      if (ctx.measureText(prueba).width > ancho && act) { out.push(act); act = p; } else act = prueba;
+    });
+    if (act) out.push(act);
+    return out;
+  }
+  async function descargarTarjeta() {
+    var btn = $('#btn-tarjeta');
+    btn.disabled = true;
+    try {
+      if (document.fonts && document.fonts.load) {
+        await Promise.all([document.fonts.load('80px "DM Serif Display"'), document.fonts.load('800 30px Nunito')]).catch(function () {});
+      }
+      var W = 1080, H = 1350, P = 96;
+      var cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      var c = cv.getContext('2d');
+      var g = c.createLinearGradient(0, 0, W * 0.6, H);
+      g.addColorStop(0, '#2F6FC4'); g.addColorStop(0.55, '#1B4B8F'); g.addColorStop(1, '#0F2A52');
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      // corazón decorativo
+      c.save(); c.globalAlpha = 0.09; c.fillStyle = '#fff';
+      c.translate(780, 1000); c.scale(16, 16);
+      c.beginPath(); c.moveTo(16, 28); c.bezierCurveTo(16, 28, 3, 20.5, 3, 11.6); c.bezierCurveTo(3, 4, 13, 2, 16, 7.4);
+      c.bezierCurveTo(19, 2, 29, 4, 29, 11.6); c.bezierCurveTo(29, 20.5, 16, 28, 16, 28); c.fill(); c.restore();
+
+      c.fillStyle = '#BCD3F2'; c.font = '800 30px Nunito, sans-serif'; c.textBaseline = 'alphabetic';
+      c.fillText('MI HERRAMIENTA PARA LLEVAR', P, P + 40);
+      var tam = E.inmediata.length > 40 ? 68 : 96;
+      c.fillStyle = '#fff'; c.font = tam + 'px "DM Serif Display", Georgia, serif';
+      var y = P + 90 + tam;
+      lineas(c, E.inmediata, W - P * 2).slice(0, 5).forEach(function (l) { c.fillText(l, P, y); y += tam * 1.15; });
+      y += 20;
+      c.fillStyle = '#DCE8F8'; c.font = '700 44px Nunito, sans-serif';
+      c.fillText('La usaré: ' + E.cuando.toLowerCase(), P, y);
+      if (E.palabra) {
+        y += 110;
+        c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(P, y - 50, W - P * 2, 2);
+        c.fillStyle = '#DCE8F8'; c.font = '600 38px Nunito, sans-serif';
+        c.fillText('Hoy en una palabra', P, y + 20);
+        c.fillStyle = '#fff'; c.font = '76px "DM Serif Display", Georgia, serif';
+        c.fillText(E.palabra.trim(), P, y + 110);
+      }
+      c.fillStyle = '#BCD3F2'; c.font = '700 28px Nunito, sans-serif';
+      c.fillText(CONFIG.PROGRAMA, P, H - P - 40);
+      c.fillText(CONFIG.PONENTE, P, H - P);
+
+      await new Promise(function (ok) {
+        cv.toBlob(function (blob) {
+          var a = document.createElement('a');
+          a.download = 'mi-herramienta.png';
+          a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a); a.click();
+          setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); ok(); }, 1500);
+        }, 'image/png');
+      });
+      anunciar('Tarjeta guardada.');
+    } catch (e) { anunciar('No se pudo crear la tarjeta.'); }
+    finally { btn.disabled = false; }
+  }
+
+  /* ---------- Inicio ---------- */
+  $('#nombre-programa').textContent = CONFIG.PROGRAMA;
+  if (E.paso >= PANTALLAS.length) E.paso = 0;
+  history.replaceState({ paso: E.paso }, '', E.paso ? '#' + PANTALLAS[E.paso].id : location.pathname + location.search);
+  pintar(false);
+})();
+</script>
+</body>
+</html>
